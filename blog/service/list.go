@@ -7,12 +7,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 )
 
-func (s *Server) ListBlog(ctx context.Context, in *emptypb.Empty) (*pb.ListBlogResponse, error) {
-	log.Println("ListBlogRepeated was invoked")
+func (s *Server) ListBlog(ctx context.Context, in *pb.ListBlogRequest) (*pb.ListBlogResponse, error) {
+	log.Printf("ListBlog was invoked with %v\n", in)
 
 	var blogs []*pb.Blog
 

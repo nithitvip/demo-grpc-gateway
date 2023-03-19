@@ -37,7 +37,7 @@ type BlogServiceClient interface {
 	UpdateBlog(ctx context.Context, in *UpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PartialUpdateBlog(ctx context.Context, in *UpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteBlog(ctx context.Context, in *DeleteBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ListBlog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBlogResponse, error)
+	ListBlog(ctx context.Context, in *ListBlogRequest, opts ...grpc.CallOption) (*ListBlogResponse, error)
 }
 
 type blogServiceClient struct {
@@ -93,7 +93,7 @@ func (c *blogServiceClient) DeleteBlog(ctx context.Context, in *DeleteBlogReques
 	return out, nil
 }
 
-func (c *blogServiceClient) ListBlog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListBlogResponse, error) {
+func (c *blogServiceClient) ListBlog(ctx context.Context, in *ListBlogRequest, opts ...grpc.CallOption) (*ListBlogResponse, error) {
 	out := new(ListBlogResponse)
 	err := c.cc.Invoke(ctx, BlogService_ListBlog_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -111,7 +111,7 @@ type BlogServiceServer interface {
 	UpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error)
 	PartialUpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error)
 	DeleteBlog(context.Context, *DeleteBlogRequest) (*emptypb.Empty, error)
-	ListBlog(context.Context, *emptypb.Empty) (*ListBlogResponse, error)
+	ListBlog(context.Context, *ListBlogRequest) (*ListBlogResponse, error)
 	mustEmbedUnimplementedBlogServiceServer()
 }
 
@@ -134,7 +134,7 @@ func (UnimplementedBlogServiceServer) PartialUpdateBlog(context.Context, *Update
 func (UnimplementedBlogServiceServer) DeleteBlog(context.Context, *DeleteBlogRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlog not implemented")
 }
-func (UnimplementedBlogServiceServer) ListBlog(context.Context, *emptypb.Empty) (*ListBlogResponse, error) {
+func (UnimplementedBlogServiceServer) ListBlog(context.Context, *ListBlogRequest) (*ListBlogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBlog not implemented")
 }
 func (UnimplementedBlogServiceServer) mustEmbedUnimplementedBlogServiceServer() {}
@@ -241,7 +241,7 @@ func _BlogService_DeleteBlog_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _BlogService_ListBlog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(ListBlogRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -253,7 +253,7 @@ func _BlogService_ListBlog_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: BlogService_ListBlog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlogServiceServer).ListBlog(ctx, req.(*emptypb.Empty))
+		return srv.(BlogServiceServer).ListBlog(ctx, req.(*ListBlogRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

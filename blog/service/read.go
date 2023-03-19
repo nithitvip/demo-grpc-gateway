@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 )
 
@@ -31,8 +32,11 @@ func (s *Server) ReadBlog(ctx context.Context, in *pb.ReadBlogRequest) (*pb.Read
 	}
 
 	return &pb.ReadBlogResponse{
-		Id:       data.ID.Hex(),
-		AuthorId: data.AuthorID.Hex(),
-		Title:    data.Title,
-		Content:  data.Content}, nil
+		Id:        data.ID.Hex(),
+		AuthorId:  data.AuthorID.Hex(),
+		Title:     data.Title,
+		Content:   data.Content,
+		CreatedAt: timestamppb.New(data.CreatedAt),
+		UpdatedAt: timestamppb.New(data.UpdatedAt),
+	}, nil
 }

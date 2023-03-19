@@ -4,7 +4,7 @@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@lat
 ```
 generate gateway by
 ```  
-protoc -Iproto --go_out=gateway/proto --go_opt=paths=source_relative --go-grpc_out=gateway/proto --go-grpc_opt=paths=source_relative --grpc-gateway_out=gateway/proto --grpc-gateway_opt=paths=source_relative proto/greet/v1/greet_gw.proto
+protoc -Iproto --go_out=gateway/proto --go_opt=paths=source_relative --go-grpc_out=gateway/proto --go-grpc_opt=paths=source_relative --grpc-gateway_out=gateway/proto --grpc-gateway_opt=paths=source_relative .\proto\auth\v1\auth.proto .\proto\blog\v1\blog.proto
 ```
 
 generate open api

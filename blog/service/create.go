@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"log"
+	"time"
 )
 
 func (s *Server) CreateBlog(ctx context.Context, request *pb.CreateBlogRequest) (*pb.CreateBlogResponse, error) {
@@ -24,9 +25,11 @@ func (s *Server) CreateBlog(ctx context.Context, request *pb.CreateBlogRequest) 
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot Parse ID")
 	}
 	data := BlogItem{
-		AuthorID: acctId,
-		Title:    request.Title,
-		Content:  request.Content,
+		AuthorID:  acctId,
+		Title:     request.Title,
+		Content:   request.Content,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	res, err := s.BlogCollection.InsertOne(ctx, data)

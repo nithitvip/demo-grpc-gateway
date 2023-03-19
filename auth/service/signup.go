@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
 
 func (s *Server) Signup(ctx context.Context, request *pb.SignupRequest) (*pb.SignupResponse, error) {
@@ -35,9 +37,12 @@ func (s *Server) Signup(ctx context.Context, request *pb.SignupRequest) (*pb.Sig
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
+	now := time.Now();
 	data := AuthItem{
-		Username: username,
-		Password: hashedPassword,
+		Username:  username,
+		Password:  hashedPassword,
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	res, err := s.AuthCollection.InsertOne(ctx, data)
@@ -52,5 +57,6 @@ func (s *Server) Signup(ctx context.Context, request *pb.SignupRequest) (*pb.Sig
 
 	return &pb.SignupResponse{
 		AccountId: oid.Hex(),
+		CreatedAt: timestamppb.New(now),
 	}, nil
 }

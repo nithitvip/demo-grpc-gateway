@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
+	"time"
 )
 
 func (s *Server) UpdateBlog(ctx context.Context, in *pb.UpdateBlogRequest) (*emptypb.Empty, error) {
@@ -31,17 +32,10 @@ func (s *Server) UpdateBlog(ctx context.Context, in *pb.UpdateBlogRequest) (*emp
 		return nil, err
 	}
 
-	acct, err := primitive.ObjectIDFromHex(accountId)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Cannot Parse ID")
-	}
-
-	data := &BlogItem{AuthorID: acct, Title: in.Title, Content: in.Content}
-
 	res, err := s.BlogCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": oid},
-		bson.M{"$set": data},
+		bson.M{"$set": bson.M{"title": in.Title, "content": in.Content, "updated_at": primitive.NewDateTimeFromTime(time.Now())}},
 	)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "error: %v", err)
