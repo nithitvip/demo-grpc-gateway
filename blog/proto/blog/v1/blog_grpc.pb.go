@@ -35,7 +35,7 @@ type BlogServiceClient interface {
 	CreateBlog(ctx context.Context, in *CreateBlogRequest, opts ...grpc.CallOption) (*CreateBlogResponse, error)
 	ReadBlog(ctx context.Context, in *ReadBlogRequest, opts ...grpc.CallOption) (*ReadBlogResponse, error)
 	UpdateBlog(ctx context.Context, in *UpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	PartialUpdateBlog(ctx context.Context, in *UpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PartialUpdateBlog(ctx context.Context, in *PartialUpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteBlog(ctx context.Context, in *DeleteBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListBlog(ctx context.Context, in *ListBlogRequest, opts ...grpc.CallOption) (*ListBlogResponse, error)
 }
@@ -75,7 +75,7 @@ func (c *blogServiceClient) UpdateBlog(ctx context.Context, in *UpdateBlogReques
 	return out, nil
 }
 
-func (c *blogServiceClient) PartialUpdateBlog(ctx context.Context, in *UpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *blogServiceClient) PartialUpdateBlog(ctx context.Context, in *PartialUpdateBlogRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, BlogService_PartialUpdateBlog_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -109,7 +109,7 @@ type BlogServiceServer interface {
 	CreateBlog(context.Context, *CreateBlogRequest) (*CreateBlogResponse, error)
 	ReadBlog(context.Context, *ReadBlogRequest) (*ReadBlogResponse, error)
 	UpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error)
-	PartialUpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error)
+	PartialUpdateBlog(context.Context, *PartialUpdateBlogRequest) (*emptypb.Empty, error)
 	DeleteBlog(context.Context, *DeleteBlogRequest) (*emptypb.Empty, error)
 	ListBlog(context.Context, *ListBlogRequest) (*ListBlogResponse, error)
 	mustEmbedUnimplementedBlogServiceServer()
@@ -128,7 +128,7 @@ func (UnimplementedBlogServiceServer) ReadBlog(context.Context, *ReadBlogRequest
 func (UnimplementedBlogServiceServer) UpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBlog not implemented")
 }
-func (UnimplementedBlogServiceServer) PartialUpdateBlog(context.Context, *UpdateBlogRequest) (*emptypb.Empty, error) {
+func (UnimplementedBlogServiceServer) PartialUpdateBlog(context.Context, *PartialUpdateBlogRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PartialUpdateBlog not implemented")
 }
 func (UnimplementedBlogServiceServer) DeleteBlog(context.Context, *DeleteBlogRequest) (*emptypb.Empty, error) {
@@ -205,7 +205,7 @@ func _BlogService_UpdateBlog_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _BlogService_PartialUpdateBlog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBlogRequest)
+	in := new(PartialUpdateBlogRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func _BlogService_PartialUpdateBlog_Handler(srv interface{}, ctx context.Context
 		FullMethod: BlogService_PartialUpdateBlog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlogServiceServer).PartialUpdateBlog(ctx, req.(*UpdateBlogRequest))
+		return srv.(BlogServiceServer).PartialUpdateBlog(ctx, req.(*PartialUpdateBlogRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

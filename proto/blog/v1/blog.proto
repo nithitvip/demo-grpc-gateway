@@ -38,10 +38,8 @@ message UpdateBlogRequest {
 }
 
 message PartialUpdateBlogRequest {
-  string id = 1;
+  UpdateBlogRequest update_req = 1;
   google.protobuf.FieldMask field_mask = 2;
-  string title = 3;
-  string content = 4;
 }
 
 message DeleteBlogRequest {
@@ -84,10 +82,10 @@ service BlogService {
       body: "*"
     };
   };
-  rpc PartialUpdateBlog (UpdateBlogRequest) returns (google.protobuf.Empty) {
+  rpc PartialUpdateBlog (PartialUpdateBlogRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      patch: "/api/v1/blog/{id}"
-      body: "*"
+      patch: "/api/v1/blog/{update_req.id}"
+      body: "update_req"
     };
   };
   rpc DeleteBlog (DeleteBlogRequest) returns (google.protobuf.Empty) {

@@ -9,11 +9,13 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"log"
 
 	pb "blog/proto/blog/v1"
 )
 
 func (s *Server) DeleteBlog(ctx context.Context, in *pb.DeleteBlogRequest) (*emptypb.Empty, error) {
+	log.Printf("DeleteBlog was invoked with %v\n", in)
 
 	accountId, ok := getAccountId(ctx)
 	if !ok {
