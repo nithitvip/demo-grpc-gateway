@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package blog.v1;
+
+option go_package= "github.com/nithitvip/demo-grpc-gateway/proto";
+
+import "google/api/annotations.proto";
+
+message SignInRequest{
+  string username = 1;
+  string password = 2;
+}
+
+message SignInResponse {
+  string token = 1;
+}
+
+message SignupRequest {
+  string username = 1;
+  string password = 2;
+
+}
+
+message SignupResponse {
+  string account_id = 1;
+}
+
+service AuthService {
+  rpc SignIn(SignInRequest) returns (SignInResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/signin"
+      body: "*"
+    };
+  };
+  rpc Signup(SignupRequest) returns (SignInResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/signup"
+      body: "*"
+    };
+  }
+}
