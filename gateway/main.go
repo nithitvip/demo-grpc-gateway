@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"gateway/interceptor"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -27,10 +28,7 @@ import (
 //}
 
 func main() {
-	//log := grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
-	//grpclog.SetLoggerV2(log)
-
-	gwmux := runtime.NewServeMux()
+	gwmux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(CustomMatcher))
 	err := registerAuthService(gwmux)
 	if err != nil {
 		log.Fatal(err)
@@ -67,10 +65,17 @@ func registerAuthService(gwmux *runtime.ServeMux) error {
 }
 
 func registerBlogService(gwmux *runtime.ServeMux) error {
-	dialOpts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	dialOpts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(interceptor.AuthUnaryClientInterceptor()),
+	}
 	err := blogpb.RegisterBlogServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:50052", dialOpts)
 	if err != nil {
 		return fmt.Errorf("failed to register blog: %w", err)
 	}
 	return nil
+}
+
+func CustomMatcher(key string) (string, bool) {
+	return key, false
 }
