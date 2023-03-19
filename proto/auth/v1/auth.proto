@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package blog.v1;
+package auth.v1;
 
 option go_package= "github.com/nithitvip/demo-grpc-gateway/proto";
 

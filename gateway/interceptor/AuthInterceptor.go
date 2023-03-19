@@ -34,7 +34,7 @@ func AuthUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 			return err
 		}
 
-		log.Println(accountId)
+		log.Printf("method: %s with account_id: %s", method, accountId)
 		ctx = metadata.AppendToOutgoingContext(ctx, "account_id", accountId)
 
 		err = invoker(ctx, method, req, reply, cc, opts...)

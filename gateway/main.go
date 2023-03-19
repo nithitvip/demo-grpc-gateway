@@ -4,28 +4,14 @@ import (
 	"context"
 	"fmt"
 	"gateway/interceptor"
+	authpb "gateway/proto/auth/v1"
+	blogpb "gateway/proto/blog/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
-	"strings"
-
-	authpb "gateway/proto/auth/v1"
-	blogpb "gateway/proto/blog/v1"
 )
-
-// getOpenAPIHandler serves an OpenAPI UI.
-// Adapted from https://github.com/philips/grpc-gateway-example/blob/a269bcb5931ca92be0ceae6130ac27ae89582ecc/cmd/serve.go#L63
-//func getOpenAPIHandler() http.Handler {
-//	mime.AddExtensionType(".svg", "image/svg+xml")
-//	// Use subdirectory in embedded files
-//	subFS, err := fs.Sub(third_party.OpenAPI, "OpenAPI")
-//	if err != nil {
-//		panic("couldn't create sub filesystem: " + err.Error())
-//	}
-//	return http.FileServer(http.FS(subFS))
-//}
 
 func main() {
 	gwmux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(CustomMatcher))
@@ -39,24 +25,26 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//oa := getOpenAPIHandler()
+	mux := http.NewServeMux()
+	mux.Handle("/", gwmux)
+
+	mux.Handle("/openapiv2/", http.StripPrefix("/openapiv2", http.FileServer(http.Dir("openapiv2"))))
+	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", http.FileServer(http.Dir("dist"))))
+
 	gatewayAddr := "0.0.0.0:8080"
 	gwServer := &http.Server{
-		Addr: gatewayAddr,
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasPrefix(r.URL.Path, "/api") {
-				gwmux.ServeHTTP(w, r)
-				return
-			}
-			//		oa.ServeHTTP(w, r)
-		}),
+		Addr:    gatewayAddr,
+		Handler: mux,
 	}
 	log.Println("Serving gRPC-Gateway and OpenAPI Documentation on http://", gatewayAddr)
 	log.Fatalln(gwServer.ListenAndServe())
 }
 
 func registerAuthService(gwmux *runtime.ServeMux) error {
-	dialOpts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	dialOpts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(interceptor.LogUnaryClientInterceptor()),
+	}
 	err := authpb.RegisterAuthServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:50051", dialOpts)
 	if err != nil {
 		return fmt.Errorf("failed to register auth: %w", err)
@@ -67,6 +55,7 @@ func registerAuthService(gwmux *runtime.ServeMux) error {
 func registerBlogService(gwmux *runtime.ServeMux) error {
 	dialOpts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(interceptor.LogUnaryClientInterceptor()),
 		grpc.WithUnaryInterceptor(interceptor.AuthUnaryClientInterceptor()),
 	}
 	err := blogpb.RegisterBlogServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:50052", dialOpts)

@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_SignIn_FullMethodName = "/blog.v1.AuthService/SignIn"
-	AuthService_Signup_FullMethodName = "/blog.v1.AuthService/Signup"
+	AuthService_SignIn_FullMethodName = "/auth.v1.AuthService/SignIn"
+	AuthService_Signup_FullMethodName = "/auth.v1.AuthService/Signup"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -129,7 +129,7 @@ func _AuthService_Signup_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "blog.v1.AuthService",
+	ServiceName: "auth.v1.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
