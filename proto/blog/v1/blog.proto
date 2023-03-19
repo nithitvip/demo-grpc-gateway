@@ -97,7 +97,7 @@ service BlogService {
   };
   rpc ListBlog (ListBlogRequest) returns (ListBlogResponse) {
     option (google.api.http) = {
-      get: "/api/v1/blog"
+      get: "/api/v1/blogs"
     };
   };
 
