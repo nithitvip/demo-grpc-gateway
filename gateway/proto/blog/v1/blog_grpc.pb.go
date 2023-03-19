@@ -102,7 +102,7 @@ func (c *blogServiceClient) ListBlog(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-// BlogServiceServer is the service API for BlogService service.
+// BlogServiceServer is the server API for BlogService service.
 // All implementations must embed UnimplementedBlogServiceServer
 // for forward compatibility
 type BlogServiceServer interface {

@@ -5,6 +5,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
@@ -22,7 +23,11 @@ func (s *Server) ReadBlog(ctx context.Context, in *pb.ReadBlogRequest) (*pb.Read
 
 	res := s.BlogCollection.FindOne(ctx, filter)
 	if err := res.Decode(data); err != nil {
-		return nil, status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
+		if err == mongo.ErrNoDocuments {
+			return nil, status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
+		} else {
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
 	}
 
 	return &pb.ReadBlogResponse{

@@ -32,7 +32,7 @@ service AuthService {
       body: "*"
     };
   };
-  rpc Signup(SignupRequest) returns (SignInResponse) {
+  rpc Signup(SignupRequest) returns (SignupResponse) {
     option (google.api.http) = {
       post: "/api/v1/signup"
       body: "*"

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -46,7 +47,11 @@ func (s *Server) validateBlogOwner(ctx context.Context, blogId primitive.ObjectI
 
 	res := s.BlogCollection.FindOne(ctx, filter)
 	if err := res.Decode(data); err != nil {
-		return status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
+		if err == mongo.ErrNoDocuments {
+			return status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
+		} else {
+			return status.Errorf(codes.Internal, err.Error())
+		}
 	}
 
 	if data.AuthorID.Hex() != accountId {
